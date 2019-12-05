@@ -4,7 +4,7 @@
 	<h1>Funnel</h1>
 	<ul>
 		{% if g.user %}
-			<li><span>{{ g.user['username'] }}</span></li>
+			<li><span>{{ g.user[0] }}</span></li>
 			<li><a href='{{ url_for('auth.logout') }}'>Logout</a></li>
 		{% else %}
 			<li><a href='{{ url_for('auth.login') }}'>Login</a></li>
