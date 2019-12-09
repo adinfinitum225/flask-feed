@@ -1,4 +1,3 @@
-from urllib.request import urlopen
 from xml.etree.ElementTree import parse
 from dataclasses import dataclass
 
@@ -24,9 +23,8 @@ class AtomEntry:
     link: dict
     summary: str
 
-def filter_feed(request):
-    feed = parse(request)
-    root = feed.getroot()
+def filter_feed(tree):
+    root = tree.getroot()
 
     author = root.find('atom:author', ns)
     if author is not None:

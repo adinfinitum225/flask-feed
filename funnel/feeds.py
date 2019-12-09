@@ -4,7 +4,7 @@ from flask import (
         Blueprint, flash, g, redirect, render_template, request, url_for
         )
 
-from funnel.filter.atomparse import filter_feed, filter_entry
+from funnel.filter.parsehelp import filter_feed, normalize_url
 from funnel.db import get_db
 
 bp = Blueprint('feeds', __name__)
@@ -16,7 +16,7 @@ def index():
     if g.user is not None:
         cur.execute(
                 'SELECT url FROM feeds WHERE username = %s',
-                (g.user,)
+                (g.user[0],)
                 )
         urls = cur.fetchall()
         feeds = digest_feeds(urls)
@@ -44,7 +44,7 @@ def subscribe():
 def digest_feeds(urls):
     feeds = []
     for url in urls:
-        request = urlopen(url[0])
-        feed = filter_feed(request)
+        url = normalize_url(url[0])
+        feed = filter_feed(url)
         feeds.append(feed)
     return feeds
