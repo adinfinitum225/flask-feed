@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Funnel{% endblock %} - {{ g.user[0] }}</h1>
+{% endblock %}
+
+{% block content %}
+<form action='{{ url_for('feeds.subscribe') }}' method='post'>
+		<label for='url'>Feed URL</label>
+		<input name='url' id='url' type='url' value='https://' required>
+		<button type='submit'>Subscribe</button>
+	</form>
+	{% for feed in feeds %}
+		<article class='feed'>
+			<header>
+				<div>
+					<h2>{{ feed.title }}</h2>
+					<a href='{{ feed.link['href'] }}'>Feed Website</a>
+				</div>
+			</header>
+			{% for entry in feed.entries %}
+				<section>
+					<div>{{ entry.title }}</div>
+					<div>{{ entry.content }}</div>
+					<!-- Need to check and see how to secure the html code -->
+					<div>{{ entry.summary|safe }}</div>
+					<div>{{ entry.description|safe }}</div>
+					<div>{{ entry.author }}</div>
+				</section>
+			{% endfor %}
+		</article>
+	{% endfor %}
+{% endblock %}
+					
