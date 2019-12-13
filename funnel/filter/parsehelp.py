@@ -1,24 +1,21 @@
-from xml.etree.ElementTree import parse
-from urllib.request import urlopen, urljoin
-from urllib.parse import urlsplit
+import re
+from datetime import datetime
 
-from . import atomparse
-from . import rssparse
+class ParseHelp:
+    def to_pydate(date):
+        months = dict(Jan=1, Feb=2, Mar=3, Apr=4, May=5, Jun=6, 
+                      Jul=7, Aug=8, Sep=9, Oct=10, Nov=11, Dec=12)
+        match = re.search(r'\d\d+ [a-zA-Z]{3} (19|20)\d\d (\d\d(.|$))*', date)
+        if match:
+            pieces = match.group().split()
+            pieces.extend(pieces.pop(-1).split(':'))
+            pieces[1] = months[pieces[1]]
+            tmp = pieces[0]
+            pieces[0] = pieces[2]
+            pieces[2] = tmp
+            pieces = [int(x) for x in pieces]
 
-def filter_feed(url):
-    with urlopen(url) as response:
-        tree = parse(response)
-    root = tree.getroot()
-    if root.tag == 'rss':
-        return rssparse.filter_feed(tree)
-    else:
-        return atomparse.filter_feed(tree)
-
-def normalize_url(url):
-    url = url.casefold()
-    url = url.strip()
-    url = url.split('www.')
-    url = url[-1].split('//')
-    url = urljoin('https://', ('//' + url[-1]))
-
-    return url
+            return datetime(*pieces)
+        else:
+            pieces = date.split('Z')
+            return datetime.fromisoformat(pieces[0])
