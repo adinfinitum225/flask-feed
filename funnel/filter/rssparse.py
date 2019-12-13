@@ -1,58 +1,54 @@
-from urllib.request import urlopen
-from xml.etree.ElementTree import parse
 from dataclasses import dataclass
+from . import baseparse
+from funnel.filter.parsehelp import ParseHelp
 
 @dataclass
-class RssFeed:
-    title: str
+class RssFeed(baseparse.BaseFeed, ParseHelp):
     link: str
     description: str
-    entries: list
+    
+    @classmethod
+    def filter_feed(cls, tree):
+        root = tree.getroot()
+
+        title = root.find('.//title')
+        if title is not None:
+            title = title.text
+        link = root.find('.//link')
+        if link is not None:
+            link = link.text
+        description = root.find('.//description')
+        if description is not None:
+            description = description.text
+        entries = root.findall('.//item')
+        entries = [RssItem.filter_item(item) for item in entries]
+
+        return RssFeed(title, entries, link, description)
 
 @dataclass
-class RssItem:
-    title: str
+class RssItem(baseparse.BaseEntry, ParseHelp):
     link: str
     description: str
-    author: str
-    pubdate: str
-    guid: str
 
-def filter_feed(tree):
-    root = tree.getroot()
+    @classmethod
+    def filter_item(cls, item):
+        title = item.find('title')
+        if title is not None:
+            title = title.text
+        link = item.find('link')
+        if link is not None:
+            link = link.text
+        description = item.find('description')
+        if description is not None:
+            description = description.text
+        author = item.find('author')
+        if author is not None:
+            author = author.text
+        updated = item.find('pubDate')
+        if updated is not None:
+            updated = super().to_pydate(updated.text)
+        id = item.find('guid')
+        if id is not None:
+            id = id.text
 
-    title = root.find('.//title')
-    if title is not None:
-        title = title.text
-    link = root.find('.//link')
-    if link is not None:
-        link = link.text
-    description = root.find('.//description')
-    if description is not None:
-        description = description.text
-    entries = root.findall('.//item')
-    entries = [filter_item(item) for item in entries]
-
-    return RssFeed(title, link, description, entries)
-
-def filter_item(item):
-    title = item.find('title')
-    if title is not None:
-        title = title.text
-    link = item.find('link')
-    if link is not None:
-        link = link.text
-    description = item.find('description')
-    if description is not None:
-        description = description.text
-    author = item.find('author')
-    if author is not None:
-        author = author.text
-    pubdate = item.find('pubDate')
-    if pubdate is not None:
-        pubdate = pubdate.text
-    guid = item.find('guid')
-    if guid is not None:
-        guid = guid.text
-
-    return RssItem(title, link, description, author, pubdate, guid)
+        return RssItem(title, author, updated, id, link, description)

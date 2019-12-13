@@ -1,10 +1,11 @@
 <title>{% block title %}{% endblock %} - Read Your Feeds!</title>
 <link rel='stylesheet' href='{{ url_for('static', filename='style.css') }}'>
+<div class='wrapper'>
 <nav>
 	<h1>Funnel</h1>
 	<ul>
 		{% if g.user %}
-			<li><span>{{ g.user[0] }}</span></li>
+			<li><span class = username>{{ g.user[0] }}</span></li>
 			<li><a href='{{ url_for('auth.logout') }}'>Logout</a></li>
 		{% else %}
 			<li><a href='{{ url_for('auth.login') }}'>Login</a></li>
@@ -12,6 +13,9 @@
 		{% endif %}
 	</ul>
 </nav>
+<aside>
+	{% block aside %}This is an aside. It goes on the side{% endblock %}
+</aside>
 <section class='content'>
 	<header>
 		{% block header %}{% endblock %}
@@ -21,3 +25,5 @@
 	{% endfor %}
 	{% block content %}{% endblock %}
 </section>
+</div>
+{% block jscript %}{% endblock %}

@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 
+{% block jscript %}
+	<script src='{{ url_for('static', filename='collapsible.js') }}'></script>
+{% endblock %}
+
 {% block header %}
 <h1>{% block title %}Funnel{% endblock %} - {{ g.user[0] }}</h1>
 {% endblock %}
 
 {% block content %}
-<form action='{{ url_for('feeds.subscribe') }}' method='post'>
+	<form action='{{ url_for('feeds.subscribe') }}' method='post'>
 		<label for='url'>Feed URL</label>
 		<input name='url' id='url' type='url' value='https://' required>
 		<button type='submit'>Subscribe</button>
@@ -19,16 +23,21 @@
 				</div>
 			</header>
 			{% for entry in feed.entries %}
-				<section>
-					<div>{{ entry.title }}</div>
-					<div>{{ entry.content }}</div>
-					<!-- Need to check and see how to secure the html code -->
-					<div>{{ entry.summary|safe }}</div>
-					<div>{{ entry.description|safe }}</div>
-					<div>{{ entry.author }}</div>
+				<section class='entry'>
+					<div class='title collapse'>{{ entry.title }}</div>
+					<div class='dropdown'>
+						<div class='content'>{{ entry.content }}</div>
+						<!-- Need to check and see how to secure the html code -->
+						<div class='summary'>{{ entry.summary|safe }}</div>
+						<div class='description'>{{ entry.description|safe }}</div>
+						<div class='author'>
+							<a href='{{ entry.author }}'>{{ entry.author }}</a>
+						</div>
+						<div class='update'>{{ entry.updated.isoformat(sep=' ') }}</div>
+						<div class='pubdate'>{{ entry.id }}</div>
+					</div>
 				</section>
 			{% endfor %}
 		</article>
 	{% endfor %}
 {% endblock %}
-					
