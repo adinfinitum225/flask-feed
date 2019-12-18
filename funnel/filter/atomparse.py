@@ -9,7 +9,6 @@ class AtomFeed(baseparse.BaseFeed, ParseHelp):
     author: str
     id: str
     updated: 'datetime'
-    link: dict
 
     @classmethod
     def filter_feed(cls, tree):

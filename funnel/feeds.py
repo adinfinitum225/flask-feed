@@ -48,6 +48,17 @@ def subscribe():
     db.commit()
     return redirect(url_for('feeds.index'))
 
+@bp.route('/<url>/delete', methods=('POST',))
+def delete(url):
+    db = get_db()
+    cur = db.cursor()
+
+    cur.execute(
+            'DELETE FROM feeds WHERE url = %s', (url,)
+            )
+    db.commit()
+    return redirect(url_for('feeds.index'))
+
 def digest_feeds(urls):
     def filter_feed(url):
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0'} 
