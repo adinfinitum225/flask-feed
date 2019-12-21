@@ -18,11 +18,14 @@
 		<article class='feed'>
 			<header>
 				<div>
-					<h2>{{ feed.title }}</h2>
-					<a href='{{ feed.link['href'] }}'>Feed Website</a>
+					<h2>{{ feed[0].title }}</h2>
+					<a href='{{ feed[0].link['href'] }}'>Feed Website</a>
+					<form action='{{ url_for('feeds.delete', id=feed[1]) }}' method='post'>
+						<button type='sumbit'>Unsubscribe</button>
+					</form>
 				</div>
 			</header>
-			{% for entry in feed.entries %}
+			{% for entry in feed[0].entries %}
 				<section class='entry'>
 					<div class='title collapse'>{{ entry.title }}</div>
 					<div class='dropdown'>
