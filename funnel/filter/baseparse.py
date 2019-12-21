@@ -4,6 +4,7 @@ from dataclasses import dataclass
 class BaseFeed:
     title: str
     entries: list
+    link: dict
 
 @dataclass
 class BaseEntry:

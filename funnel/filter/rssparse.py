@@ -4,7 +4,6 @@ from funnel.filter.parsehelp import ParseHelp
 
 @dataclass
 class RssFeed(baseparse.BaseFeed, ParseHelp):
-    link: str
     description: str
     
     @classmethod
@@ -16,7 +15,7 @@ class RssFeed(baseparse.BaseFeed, ParseHelp):
             title = title.text
         link = root.find('.//link')
         if link is not None:
-            link = link.text
+            link = {'href': link.text}
         description = root.find('.//description')
         if description is not None:
             description = description.text
